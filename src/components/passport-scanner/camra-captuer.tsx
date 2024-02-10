@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import { Button } from "../ui/button";
@@ -7,9 +8,16 @@ import {
   CameraOffIcon,
   SwitchCameraIcon,
 } from "lucide-react";
+import { toast } from "sonner";
+import { PassportData } from "@/types/state-types";
 
-const PassportCamaraCaptuer: React.FC = () => {
-  const [photo, setPhoto] = useState<File | null>(null);
+interface PassportCamaraCaptuer {
+  handleRecivedData: (data: PassportData) => void;
+}
+
+const PassportCamaraCaptuer = ({
+  handleRecivedData,
+}: PassportCamaraCaptuer) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
@@ -21,7 +29,9 @@ const PassportCamaraCaptuer: React.FC = () => {
         videoRef.current.srcObject = stream;
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
+      let errorMassage = "unknown Error";
+      if (error instanceof Error) errorMassage = error.message;
+      toast.error("Error accessing camera:", { description: errorMassage });
     }
   };
 
@@ -64,9 +74,13 @@ const PassportCamaraCaptuer: React.FC = () => {
               "/api/passport-scanner",
               formData
             );
-            console.log("Passport details:", response.data);
+            handleRecivedData(response.data);
           } catch (error) {
-            console.error("Error scanning passport:", error);
+            let errorMassage = "unknown Error";
+            if (error instanceof Error) errorMassage = error.message;
+            toast.error("Error accessing camera:", {
+              description: errorMassage,
+            });
           }
         }
       }, "image/jpeg");
@@ -101,7 +115,7 @@ const PassportCamaraCaptuer: React.FC = () => {
   };
 
   return (
-    <div className="w-1/2">
+    <div className="w-full">
       <video ref={videoRef} style={{ width: "100%" }} autoPlay></video>
       <div className="flex justify-between items-center">
         <Button onClick={handlePhotoCapture}>

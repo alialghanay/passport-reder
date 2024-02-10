@@ -12,10 +12,15 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PassportUploader from "./passport-scanner/uploader";
 import PassportCamaraCaptuer from "./passport-scanner/camra-captuer";
+import { PassportData } from "@/types/state-types";
 
-export function TabsDemo() {
+interface TabsDemo {
+  passingData: (data: PassportData) => void;
+}
+
+export function TabsDemo({ passingData }: TabsDemo) {
   return (
-    <Tabs defaultValue="upload" className="w-[500px]">
+    <Tabs defaultValue="upload" className="md:w-[700px]">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="upload">Upload</TabsTrigger>
         <TabsTrigger value="captuer">Captuer</TabsTrigger>
@@ -24,16 +29,12 @@ export function TabsDemo() {
         <Card>
           <CardHeader>
             <CardTitle>Upload</CardTitle>
-            <CardDescription>
-              Make changes to your Upload here. Click save when you're done.
-            </CardDescription>
+            <CardDescription>Make changes to your Upload here.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <PassportUploader />
+          <CardContent>
+            <PassportUploader handleRecivedData={(d) => passingData(d)} />
           </CardContent>
-          <CardFooter>
-            <Button>Save changes</Button>
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
       </TabsContent>
       <TabsContent value="captuer">
@@ -41,22 +42,14 @@ export function TabsDemo() {
           <CardHeader>
             <CardTitle>captuer</CardTitle>
             <CardDescription>
-              Change your captuer here. After saving, you'll be logged out.
+              Change your captuer here. After saving,
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current captuer</Label>
-              <PassportCamaraCaptuer />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New captuer</Label>
-              <Input id="new" type="captuer" />
-            </div>
+          <CardContent>
+            <Label htmlFor="current">Current captuer</Label>
+            <PassportCamaraCaptuer handleRecivedData={(d) => passingData(d)} />
           </CardContent>
-          <CardFooter>
-            <Button>Save captuer</Button>
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
       </TabsContent>
     </Tabs>

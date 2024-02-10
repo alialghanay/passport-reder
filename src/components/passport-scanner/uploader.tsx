@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Input } from "../ui/input";
+import { PassportData } from "@/types/state-types";
+import { toast } from "sonner";
 
-const PassportUploader = () => {
+interface PassportUploader {
+  handleRecivedData: (data: PassportData) => void;
+}
+
+const PassportUploader = ({ handleRecivedData }: PassportUploader) => {
   const [photo, setPhoto] = useState(null);
 
   const handlePhotoCapture = async (
@@ -14,9 +20,11 @@ const PassportUploader = () => {
 
     try {
       const response = await axios.post("/api/passport-scanner", formData);
-      console.log("Passport details:", response.data);
+      handleRecivedData(response.data);
     } catch (error) {
-      console.error("Error scanning passport:", error);
+      let errorMassage = "unknown Error";
+      if (error instanceof Error) errorMassage = error.message;
+      toast.error("Error accessing camera:", { description: errorMassage });
     }
   };
 
