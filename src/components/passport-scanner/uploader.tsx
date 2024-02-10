@@ -16,12 +16,16 @@ const PassportUploader = ({ handleRecivedData }: PassportUploader) => {
   ) => {
     const file = event.target.files && event.target.files[0];
     const formData = new FormData();
-    if (file) formData.append("photo", file);
+    if (file) formData.append("passport_image", file);
 
     try {
-      const response = await axios.post("/api/passport-scanner", formData);
+      const response = await axios.post(
+        "http://localhost:8000/passport/read-info",
+        formData
+      );
       handleRecivedData(response.data);
     } catch (error) {
+      console.log(error);
       let errorMassage = "unknown Error";
       if (error instanceof Error) errorMassage = error.message;
       toast.error("Error accessing camera:", { description: errorMassage });
