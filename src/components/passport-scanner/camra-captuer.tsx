@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, SetStateAction, Dispatch } from "react";
 import axios from "axios";
 import { Button } from "../ui/button";
 import {
@@ -13,10 +13,14 @@ import { PassportData } from "@/types/state-types";
 
 interface PassportCamaraCaptuer {
   handleRecivedData: (data: PassportData) => void;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
 }
 
 const PassportCamaraCaptuer = ({
   handleRecivedData,
+  setIsLoading,
+  isLoading,
 }: PassportCamaraCaptuer) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -67,11 +71,13 @@ const PassportCamaraCaptuer = ({
       canvas.toBlob(async (blob) => {
         if (blob) {
           const formData = new FormData();
-          formData.append("photo", blob, "photo.jpg");
+          formData.append("passport_image", blob, "photo.jpg");
+
+          setIsLoading(true);
 
           try {
             const response = await axios.post(
-              "/api/passport-scanner",
+              "http://localhost:8000/passport/read-info",
               formData
             );
             handleRecivedData(response.data);
@@ -81,6 +87,8 @@ const PassportCamaraCaptuer = ({
             toast.error("Error accessing camera:", {
               description: errorMassage,
             });
+          } finally {
+            setIsLoading(false);
           }
         }
       }, "image/jpeg");

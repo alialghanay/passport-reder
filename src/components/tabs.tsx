@@ -13,14 +13,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PassportUploader from "./passport-scanner/uploader";
 import PassportCamaraCaptuer from "./passport-scanner/camra-captuer";
 import { PassportData } from "@/types/state-types";
+import { Dispatch, SetStateAction } from "react";
 
 interface TabsDemo {
   passingData: (data: PassportData) => void;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
 }
 
-export function TabsDemo({ passingData }: TabsDemo) {
+export function TabsDemo({ passingData, setIsLoading, isLoading }: TabsDemo) {
   return (
-    <Tabs defaultValue="upload" className="md:w-[700px]">
+    <Tabs defaultValue="upload" className="md:w-[700px] mb-10">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="upload">Upload</TabsTrigger>
         <TabsTrigger value="captuer">Captuer</TabsTrigger>
@@ -32,7 +35,11 @@ export function TabsDemo({ passingData }: TabsDemo) {
             <CardDescription>Make changes to your Upload here.</CardDescription>
           </CardHeader>
           <CardContent>
-            <PassportUploader handleRecivedData={(d) => passingData(d)} />
+            <PassportUploader
+              handleRecivedData={(d) => passingData(d)}
+              setIsLoading={setIsLoading}
+              isLoading={isLoading}
+            />
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
@@ -47,7 +54,11 @@ export function TabsDemo({ passingData }: TabsDemo) {
           </CardHeader>
           <CardContent>
             <Label htmlFor="current">Current captuer</Label>
-            <PassportCamaraCaptuer handleRecivedData={(d) => passingData(d)} />
+            <PassportCamaraCaptuer
+              handleRecivedData={(d) => passingData(d)}
+              setIsLoading={setIsLoading}
+              isLoading={isLoading}
+            />
           </CardContent>
           <CardFooter></CardFooter>
         </Card>

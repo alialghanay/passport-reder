@@ -20,7 +20,7 @@ interface CardWithForm {
 export function CardWithForm({ dataRecived }: CardWithForm) {
   if (dataRecived)
     return (
-      <Card className="md:w-[350px] md:m-0 mt-8">
+      <Card className="md:w-[350px] md:m-0 mt-8 mx-5">
         <CardHeader>
           <CardTitle>Passport Data</CardTitle>
           <CardDescription>
